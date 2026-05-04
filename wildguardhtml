@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wildlife Protection Bhutan</title>
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    input, textarea { display: block; margin: 10px 0; padding: 8px; width: 300px; }
+    button { padding: 10px; background: green; color: white; border: none; }
+    .report { border: 1px solid #ccc; padding: 10px; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+<h1>Wildlife Protection Bhutan</h1>
+
+<h2>Report an Incident</h2>
+<form id="reportForm">
+  <input type="text" id="type" placeholder="Type (poaching, injured animal)" required>
+  <input type="text" id="location" placeholder="Location" required>
+  <textarea id="description" placeholder="Description" required></textarea>
+  <button type="submit">Submit</button>
+</form>
+
+<h2>Reports</h2>
+<div id="reports"></div>
+
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot } 
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const form = document.getElementById("reportForm");
+  const reportsDiv = document.getElementById("reports");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const type = document.getElementById("type").value;
+    const location = document.getElementById("location").value;
+    const description = document.getElementById("description").value;
+
+    await addDoc(collection(db, "reports"), {
+      type,
+      location,
+      description
+    });
+
+    form.reset();
+  });
+
+  onSnapshot(collection(db, "reports"), (snapshot) => {
+    reportsDiv.innerHTML = "";
+    snapshot.forEach(doc => {
+      const r = doc.data();
+      reportsDiv.innerHTML += `
+        <div class="report">
+          <strong>${r.type}</strong> - ${r.location}
+          <p>${r.description}</p>
+        </div>
+      `;
+    });
+  });
+</script>
+
+</body>
+</html>
