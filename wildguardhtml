@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
-<head>
+<head> 
+  <link rel="stylesheet" href="styles.css">
   <title>Wildlife Protection Bhutan</title>
   <style>
     body { font-family: Arial; padding: 20px; }
